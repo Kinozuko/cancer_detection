@@ -68,7 +68,6 @@ def reshape_to_png(path:str, files:list):
       errors_string.append(e)
       errors += 1
 
-  print(f"New folder created: /{path.split('/')[-1]}")
   print(f"Successful converted dcm to png with a size of {RESIZE}: {success}")
   print(f"Errors when converting dcm to png with a size of {RESIZE}: {errors}")   
   return new_images_filepath, success, errors, errors_string
@@ -88,9 +87,11 @@ def process_images(n_pools:int = 2):
     print(f"There are {len(test_images)} test images")
 
     if not os.path.exists(new_train_folder):
+        print(f"New folder created: /{new_train_folder.split('/')[-1]}")
         os.mkdir(new_train_folder)
 
     if not os.path.exists(new_test_folder):
+        print(f"New folder created: /{new_test_folder.split('/')[-1]}")
         os.mkdir(new_test_folder)
 
     with mp.Pool(n_pools) as p:
