@@ -4,6 +4,7 @@
 pip install virtualenv
 virtual env .cancer_detection
 source .cancer_detection/bin/activate
+pip install -r requirements.txt 
 ```
 
 # How to download dataset from Kaggle
