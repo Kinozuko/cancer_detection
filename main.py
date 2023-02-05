@@ -1,25 +1,20 @@
-import os
-from utils.data_utils import count_images_and_keep
-from utils.process_image import dicom_to_array
+import time
+import argparse
+from utils.process_image import dicom_to_array, reshape_to_png, process_images, count_images_and_keep
 
-BASE_PATH = os.getcwd()
-DATA_PATH = BASE_PATH + "/data"
-TRAIN_PATH = DATA_PATH + "/train_images"
-TEST_PATH = DATA_PATH + "/test_images"
-FILEPATH_TO_WORK = [TRAIN_PATH, TEST_PATH]
+def run_process_images(n_pools:int =2):
+  start_time = time.time()
+  process_images(n_pools=2)
+  end_time=time.time()
 
-
-def process_images():
-  if os.path.exists(DATA_PATH):
-    path_dict = count_images_and_keep(FILEPATH_TO_WORK)
-
-    train_images = path_dict[FILEPATH_TO_WORK[0]]
-    test_images = path_dict[FILEPATH_TO_WORK[1]]
-
-    print(f"We have {len(train_images)} for train images")
-    print(f"We have {len(test_images)} for train images")
-  else:
-      print("To work with this script you need a data folder like we describe in the README.ms")
+  print(f"Process Images runs in {end_time-start_time} seconds")
 
 if __name__=='__main__':
-    process_images()
+  parser = argparse.ArgumentParser()
+  
+  parser.add_argument("--method", type=str, default="process", help="Type of action to execute the script")
+  parser.add_argument("--n_pools", type=int, default=2, help="Number of parallel processes to run")
+  args = parser.parse_args()
+
+  if args.method=='process':
+    run_process_images(n_pools=args.n_pools)
