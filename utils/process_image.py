@@ -5,27 +5,14 @@ import cv2
 import dicomsdl
 import numpy as np
 
+from .data_utils import count_images_and_keep
+
 RESIZE = (512, 512)  # Image resize
 BASE_PATH = os.getcwd()
 DATA_PATH = BASE_PATH + "/data"
 TRAIN_PATH = DATA_PATH + "/train_images"
 TEST_PATH = DATA_PATH + "/test_images"
 FILEPATH_TO_WORK = [TRAIN_PATH, TEST_PATH]
-
-
-def count_images_and_keep(filepaths: list):
-    dict_files = {}
-
-    for path in filepaths:
-        images_files = []
-
-        for dir_name, _, file_list in os.walk(path):
-            for filename in file_list:
-                if ".dcm" in filename.lower():
-                    images_files.append(os.path.join(dir_name, filename))
-        dict_files[path] = images_files
-
-    return dict_files
 
 
 def dicom_to_array(path: str):

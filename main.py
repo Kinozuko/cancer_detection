@@ -2,12 +2,7 @@ import argparse
 import sys
 import time
 
-from utils.process_image import (
-    count_images_and_keep,
-    dicom_to_array,
-    process_images,
-    reshape_to_png,
-)
+from utils.process_image import process_images
 
 
 def run_process_images(n_pools: int = 2):
