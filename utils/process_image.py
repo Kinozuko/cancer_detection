@@ -4,6 +4,7 @@ import os
 import cv2
 import dicomsdl
 import numpy as np
+import pandas as pd
 
 from .data_utils import count_images_and_keep
 
@@ -94,3 +95,50 @@ def process_images(n_pools: int = 2):
         print(
             "To work with this script you need a data folder like we describe in the README.md"
         )
+
+
+def read_images_dataset():
+    data = []
+
+    train_folder = (
+        DATA_PATH + f"/train_{RESIZE[0]}_{RESIZE[1]}"
+    )  # The folder is the same created int process_images function
+    train_csv = pd.read_csv(DATA_PATH + "/train.csv")
+
+    for patient_id in os.listdir(train_folder):
+
+        patient_folder = train_folder + "/" + patient_id
+
+        images_ids = [
+            int(image.split(".png")[0]) for image in os.listdir(patient_folder)
+        ]
+        is_cancer = (
+            train_csv[train_csv["image_id"].isin(images_ids)][["cancer", "image_id"]]
+            .set_index("image_id")
+            .to_dict(orient="index")
+        )
+
+        data.extend(
+            list(
+                map(
+                    lambda s: (
+                        cv2.imread(patient_folder + "/" + s),
+                        is_cancer[int(s.split(".png")[0])]["cancer"],
+                    ),
+                    os.listdir(patient_folder),
+                )
+            )
+        )
+
+    # Now let's format the data to a numpy array
+
+    x, y = [], []
+
+    for raw_data in data:
+        x.append(raw_data[0])
+        y.append(raw_data[1])
+
+    x_data = np.array(x)
+    y_data = np.array(y)
+
+    return x_data, y_data

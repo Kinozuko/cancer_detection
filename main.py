@@ -2,7 +2,7 @@ import argparse
 import sys
 import time
 
-from utils.process_image import process_images
+from utils.process_image import process_images, read_images_dataset
 
 
 def run_process_images(n_pools: int = 2):
@@ -13,6 +13,15 @@ def run_process_images(n_pools: int = 2):
     print(f"Process Images runs in {end_time-start_time} seconds")
 
 
+def run_train_model():
+    start_time = time.time()
+    x, y = read_images_dataset()
+
+    end_time = time.time()
+
+    print(f"Training model runs in {end_time-start_time} seconds")
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
@@ -20,7 +29,7 @@ if __name__ == "__main__":
         "--method",
         type=str,
         default="process",
-        choices=["process"],
+        choices=["process", "train"],
         help="Type of action to execute the script",
     )
     parser.add_argument(
@@ -33,3 +42,5 @@ if __name__ == "__main__":
             print(f"n_pools argument need to be greater to 0")
             sys.exit()
         run_process_images(n_pools=args.n_pools)
+    elif args.method == "train":
+        run_train_model()
