@@ -2,6 +2,7 @@ import argparse
 import sys
 import time
 
+from utils.data_utils import train_test_as_tensor
 from utils.process_image import process_images, read_images_dataset
 
 
@@ -16,7 +17,7 @@ def run_process_images(n_pools: int = 2):
 def run_train_model():
     start_time = time.time()
     x, y = read_images_dataset()
-
+    train_ds, test_ds, validation_ds = train_test_as_tensor(x, y)
     end_time = time.time()
 
     print(f"Training model runs in {end_time-start_time} seconds")

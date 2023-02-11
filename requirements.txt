@@ -2,3 +2,6 @@ pandas
 numpy
 opencv-python
 dicomsdl
+kaggle
+scikit-learn
+tensorflow==2.*
