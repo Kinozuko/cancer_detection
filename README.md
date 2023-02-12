@@ -23,5 +23,5 @@ mv rsna-breast-cancer-detection/ data/
 Execute python main.py --method process --n_pools 2
 Arguments:
     --method List of values [process]
-    --n_pool Integer greater to zero
+    --n-pool Integer greater to zero
 ```

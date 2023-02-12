@@ -6,14 +6,15 @@ import dicomsdl
 import numpy as np
 import pandas as pd
 
+from .constants import (
+    BASE_PATH,
+    DATA_PATH,
+    FILEPATH_TO_WORK,
+    RESIZE,
+    TEST_PATH,
+    TRAIN_PATH,
+)
 from .data_utils import count_images_and_keep
-
-RESIZE = (512, 512)  # Image resize
-BASE_PATH = os.getcwd()
-DATA_PATH = BASE_PATH + "/data"
-TRAIN_PATH = DATA_PATH + "/train_images"
-TEST_PATH = DATA_PATH + "/test_images"
-FILEPATH_TO_WORK = [TRAIN_PATH, TEST_PATH]
 
 
 def dicom_to_array(path: str):
