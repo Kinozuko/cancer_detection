@@ -14,7 +14,7 @@ from tensorflow.keras.regularizers import l2
 from tensorflow.keras.utils import plot_model
 
 from .constants import SHAPE
-from .data_utils import save_img_model
+from .model_utils import save_img_model
 
 
 def get_model(version: str = "v1", save_fig: bool = True):

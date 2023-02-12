@@ -7,7 +7,8 @@ from tensorflow.keras.losses import BinaryCrossentropy
 from tensorflow.keras.optimizers import Adam
 
 from utils.constants import METRICS, MODEL_VERSIONS
-from utils.data_utils import save_model_info, train_test_as_tensor
+from utils.data_utils import train_test_as_tensor
+from utils.model_utils import save_model_info
 from utils.models import get_model
 from utils.process_image import process_images, read_images_dataset
 
