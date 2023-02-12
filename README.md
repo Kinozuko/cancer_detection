@@ -15,7 +15,7 @@ Go to API section and Create New API Token to download the credentials for your 
 
 Copy credentials to /home/{username}/.kaggle
 
-Now protect ouy API key using chmod 600 /home/{username}/.kaggle (remember the path can be different for you)
+Now protect our API key using chmod 600 /home/{username}/.kaggle (remember the path can be different for you)
 
 Give execution permissions to download_and_move.sh:
 
