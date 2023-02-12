@@ -2,6 +2,6 @@
 
 kaggle competitions download -c rsna-breast-cancer-detection
 
-unzip rsna-breast-cancer-detection.zip
+mkdir data
 
-mv rsna-breast-cancer-detection/ data/
+unzip rsna-breast-cancer-detection.zip -d data/

@@ -22,6 +22,8 @@ Give execution permissions to download_and_move.sh:
 chmod +x download_and_move.sh
 
 ./download_and_move.sh
+
+NOTE: Be aware you have installed unzip in your system
 ```
 
 # Execute process to convert dcm to png
