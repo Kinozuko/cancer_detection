@@ -12,9 +12,16 @@ pip install -r requirements.txt
 ```
 https://www.kaggle.com/{your_username}/account
 Go to API section and Create New API Token to download the credentials for your account
+
 Copy credentials to /home/{username}/.kaggle
-kaggle competitions download -c rsna-breast-cancer-detection
-mv rsna-breast-cancer-detection/ data/
+
+Now protect ouy API key using chmod 600 /home/{username}/.kaggle (remember the path can be different for you)
+
+Give execution permissions to download_and_move.sh:
+
+chmod +x download_and_move.sh
+
+./download_and_move.sh
 ```
 
 # Execute process to convert dcm to png
