@@ -2,8 +2,12 @@ import argparse
 import sys
 import time
 
-from utils.constants import MODEL_VERSIONS
-from utils.data_utils import train_test_as_tensor
+from tensorflow.keras.callbacks import EarlyStopping
+from tensorflow.keras.losses import BinaryCrossentropy
+from tensorflow.keras.optimizers import Adam
+
+from utils.constants import METRICS, MODEL_VERSIONS
+from utils.data_utils import save_model_info, train_test_as_tensor
 from utils.models import get_model
 from utils.process_image import process_images, read_images_dataset
 
@@ -19,8 +23,30 @@ def run_process_images(n_pools: int = 2):
 def run_train_model(version: str = "v1"):
     start_time = time.time()
     x, y = read_images_dataset()
+
     train_ds, test_ds, validation_ds = train_test_as_tensor(x, y)
+
     model = get_model(version)
+
+    model.compile(
+        loss=BinaryCrossentropy(),
+        optimizer=Adam(learning_rate=1e-3, beta_1=0.92, beta_2=0.999),
+        metrics=METRICS,
+    )
+
+    early_callback = EarlyStopping(
+        monitor="val_auc", verbose=1, patience=3, mode="max", restore_best_weights=True
+    )
+
+    history = model.fit(
+        train_ds.batch(batch_size=64),
+        epochs=6,
+        validation_data=validation_ds.batch(batch_size=64),
+        callbacks=[early_callback],
+    )
+
+    model = save_model_info(model, early_callback, version=version)
+
     end_time = time.time()
 
     print(f"Training model runs in {end_time-start_time} seconds")
