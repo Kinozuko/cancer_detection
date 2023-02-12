@@ -11,17 +11,19 @@ from tensorflow.keras.layers import (
     MaxPool2D,
 )
 from tensorflow.keras.regularizers import l2
+from tensorflow.keras.utils import plot_model
 
 from .constants import SHAPE
+from .data_utils import save_img_model
 
 
-def get_model(version: str = "v1"):
+def get_model(version: str = "v1", save_fig: bool = True):
     if version == "v1":
-        return model_version_1()
+        return model_version_1(save_fig)
     return None
 
 
-def model_version_1():
+def model_version_1(save_fig: bool = True):
     input_layer = Input(shape=SHAPE)
     conv1_layer = Convolution2D(
         16, (5, 5), padding="same", kernel_regularizer=l2(0.001), activation=relu
@@ -39,4 +41,8 @@ def model_version_1():
     )
 
     model = Model(inputs=input_layer, outputs=pred_layer)
+
+    if save_fig:
+        save_img_model(model)
+
     return model

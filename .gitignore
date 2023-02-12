@@ -1,4 +1,5 @@
 data
+img
 *.zip
 .vscode
 __pycache__/

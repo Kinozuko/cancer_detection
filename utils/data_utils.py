@@ -1,8 +1,13 @@
 import os
 
 import cv2
+import numpy as np
 from sklearn.model_selection import train_test_split
 from tensorflow.data import Dataset
+from tensorflow.keras import Model
+from tensorflow.keras.utils import plot_model
+
+from .constants import IMG_PATH
 
 
 def count_images_and_keep(filepaths: list):
@@ -20,7 +25,9 @@ def count_images_and_keep(filepaths: list):
     return dict_files
 
 
-def train_test_as_tensor(x, y, test_size: float = 0.2, validation_size: float = 0.25):
+def train_test_as_tensor(
+    x: np.array, y: np.array, test_size: float = 0.2, validation_size: float = 0.25
+):
     x_train, x_test, y_train, y_test = train_test_split(
         x, y, test_size=test_size, random_state=0
     )
@@ -33,3 +40,15 @@ def train_test_as_tensor(x, y, test_size: float = 0.2, validation_size: float = 
     validation_ds = Dataset.from_tensor_slices((x_val, y_val))
 
     return train_ds, test_ds, validation_ds
+
+
+def save_img_model(model: Model):
+    new_path = f"{IMG_PATH}/architectures"
+
+    if not os.path.exists(IMG_PATH):
+        os.mkdir(IMG_PATH)
+
+    if not os.path.exists(new_path):
+        os.mkdir(new_path)
+
+    plot_model(model, to_file=f"{new_path}/model_arch_v1.png", show_shapes=True)
