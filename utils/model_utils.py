@@ -7,8 +7,8 @@ from tensorflow.keras.utils import plot_model
 from .constants import IMG_PATH, INFO_PATH
 
 
-def save_img_model(model: Model):
-    new_path = f"{IMG_PATH}/architectures"
+def save_img_model(model: Model, version: str = "v1"):
+    new_path = f"{IMG_PATH}/{version}"
 
     if not os.path.exists(IMG_PATH):
         os.mkdir(IMG_PATH)
@@ -16,7 +16,7 @@ def save_img_model(model: Model):
     if not os.path.exists(new_path):
         os.mkdir(new_path)
 
-    plot_model(model, to_file=f"{new_path}/model_arch_v1.png", show_shapes=True)
+    plot_model(model, to_file=f"{new_path}/model_{version}.png", show_shapes=True)
 
 
 def save_model_info(

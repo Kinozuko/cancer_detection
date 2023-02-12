@@ -17,13 +17,7 @@ from .constants import SHAPE
 from .model_utils import save_img_model
 
 
-def get_model(version: str = "v1", save_fig: bool = True):
-    if version == "v1":
-        return model_version_1(save_fig)
-    return None
-
-
-def model_version_1(save_fig: bool = True):
+def model_version_v1(save_fig: bool = True):
     input_layer = Input(shape=SHAPE)
     conv1_layer = Convolution2D(
         16, (5, 5), padding="same", kernel_regularizer=l2(0.001), activation=relu
@@ -46,3 +40,12 @@ def model_version_1(save_fig: bool = True):
         save_img_model(model)
 
     return model
+
+
+def get_model(version: str = "v1", save_fig: bool = True):
+    try:
+        version_to_function = {"v1": model_version_v1}
+        return version_to_function[version]()
+    except KeyError as e:
+        print(e)
+        return None

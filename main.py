@@ -29,28 +29,36 @@ def run_train_model(version: str = "v1"):
 
     model = get_model(version)
 
-    model.compile(
-        loss=BinaryCrossentropy(),
-        optimizer=Adam(learning_rate=1e-3, beta_1=0.92, beta_2=0.999),
-        metrics=METRICS,
-    )
+    if model:
 
-    early_callback = EarlyStopping(
-        monitor="val_auc", verbose=1, patience=3, mode="max", restore_best_weights=True
-    )
+        model.compile(
+            loss=BinaryCrossentropy(),
+            optimizer=Adam(learning_rate=1e-3, beta_1=0.92, beta_2=0.999),
+            metrics=METRICS,
+        )
 
-    history = model.fit(
-        train_ds.batch(batch_size=64),
-        epochs=6,
-        validation_data=validation_ds.batch(batch_size=64),
-        callbacks=[early_callback],
-    )
+        early_callback = EarlyStopping(
+            monitor="val_auc",
+            verbose=1,
+            patience=3,
+            mode="max",
+            restore_best_weights=True,
+        )
 
-    model = save_model_info(model, early_callback, version=version)
+        history = model.fit(
+            train_ds.batch(batch_size=64),
+            epochs=6,
+            validation_data=validation_ds.batch(batch_size=64),
+            callbacks=[early_callback],
+        )
 
-    end_time = time.time()
+        model = save_model_info(model, early_callback, version=version)
 
-    print(f"Training model runs in {end_time-start_time} seconds")
+        end_time = time.time()
+
+        print(f"Training model runs in {end_time-start_time} seconds")
+    else:
+        print(f"There's no model with version {version}")
 
 
 if __name__ == "__main__":
