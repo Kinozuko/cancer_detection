@@ -4,11 +4,17 @@ import time
 
 from tensorflow.keras.callbacks import EarlyStopping
 from tensorflow.keras.losses import BinaryCrossentropy
+from tensorflow.keras.models import load_model
 from tensorflow.keras.optimizers import Adam
 
 from utils.constants import METRICS, MODEL_VERSIONS
 from utils.data_utils import train_test_as_tensor
-from utils.model_utils import save_model_info
+from utils.model_utils import (
+    evaluate_model,
+    plot_log_loss,
+    plot_metrics,
+    save_model_info,
+)
 from utils.models import get_model
 from utils.process_image import process_images, read_images_dataset
 
@@ -25,7 +31,7 @@ def run_train_model(version: str = "v1"):
     start_time = time.time()
     x, y = read_images_dataset()
 
-    train_ds, test_ds, validation_ds = train_test_as_tensor(x, y)
+    train_ds, test_ds, validation_ds, train_test_np = train_test_as_tensor(x, y)
 
     model = get_model(version)
 
@@ -47,12 +53,16 @@ def run_train_model(version: str = "v1"):
 
         history = model.fit(
             train_ds.batch(batch_size=64),
-            epochs=6,
+            epochs=1,
             validation_data=validation_ds.batch(batch_size=64),
             callbacks=[early_callback],
         )
 
         model = save_model_info(model, early_callback, version=version)
+
+        plot_log_loss(history, f"Model {version}", version)
+        plot_metrics(history, version)
+        evaluate_model(model, test_ds)
 
         end_time = time.time()
 

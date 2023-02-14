@@ -35,4 +35,12 @@ def train_test_as_tensor(
     test_ds = Dataset.from_tensor_slices((x_test, y_test))
     validation_ds = Dataset.from_tensor_slices((x_val, y_val))
 
-    return train_ds, test_ds, validation_ds
+    return (
+        train_ds,
+        test_ds,
+        validation_ds,
+        {
+            "train": (x_train, y_train),
+            "test": (x_test, y_test),
+        },
+    )
