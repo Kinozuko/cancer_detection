@@ -94,9 +94,14 @@ def plot_metrics(history: History, version: str = "v1"):
 
 
 def evaluate_model(model: Model, test_ds: Dataset):
-    print("Evaluate model")
-
     score_test = model.evaluate(test_ds.batch(batch_size=64))
 
     for name, value in zip(model.metrics_names, score_test):
         print(name, ": ", value)
+
+
+def generate_predictions(model: Model, x_train: np.array, x_test: np.array):
+    y_train_pred = model.predict(x_train)
+    y_test_pred = model.predict(x_test)
+
+    return y_train_pred, y_test_pred

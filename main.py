@@ -11,6 +11,7 @@ from utils.constants import METRICS, MODEL_VERSIONS
 from utils.data_utils import train_test_as_tensor
 from utils.model_utils import (
     evaluate_model,
+    generate_predictions,
     plot_log_loss,
     plot_metrics,
     save_model_info,
@@ -63,6 +64,10 @@ def run_train_model(version: str = "v1"):
         plot_log_loss(history, f"Model {version}", version)
         plot_metrics(history, version)
         evaluate_model(model, test_ds)
+
+        y_train_pred, y_test_pred = generate_predictions(
+            model, train_test_np["train"][0], train_test_np["test"][0]
+        )
 
         end_time = time.time()
 
