@@ -39,6 +39,7 @@ NOTE: Be aware you have installed unzip in your system
 
 ```
 Execute python main.py --method process --n_pools 2
+
 Arguments:
     --method List of values [process, "train"]
     --n-pool Integer greater to zero
@@ -48,6 +49,7 @@ Arguments:
 
 ```
 Execute python main.py --method train --model-version v1
+
 Arguments:
     --method List of values [process "train"]
     --model-version Version of the model to run [v1, v2]
