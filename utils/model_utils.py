@@ -3,14 +3,14 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
+import seaborn as sns
 from matplotlib import rcParams
+from sklearn.metrics import confusion_matrix
 from tensorflow.data import Dataset
 from tensorflow.keras import Model
 from tensorflow.keras.callbacks import EarlyStopping, History
+from tensorflow.keras.metrics import Precision
 from tensorflow.keras.utils import plot_model
-
-from sklearn.metrics import confusion_matrix
-import seaborn as sns
 
 from .constants import IMG_PATH, INFO_PATH
 
@@ -116,16 +116,23 @@ def generate_predictions(model: Model, x_train: np.array, x_test: np.array):
 
     return y_train_pred, y_test_pred
 
-def plot_confusion_matrix(labels: np.ndarray, predictions: np.ndarray, version: str, y_type:str, p:int = 0.5):
-    cm = confusion_matrix(labels, predictions>p)
 
-    plt.figure(figsize=(5,5))
+def plot_confusion_matrix(
+    labels: np.ndarray, predictions: np.ndarray, version: str, y_type: str, p: int = 0.5
+):
+    cm = confusion_matrix(labels, predictions > p)
+
+    plt.figure(figsize=(5, 5))
     sns.heatmap(cm, annot=True, fmt="d")
-    plt.title('Confusion matrix @{:.2f}'.format(p))
-    plt.ylabel('Actual label')
-    plt.xlabel('Predicted label')
+    plt.title("Confusion matrix @{:.2f}".format(p))
+    plt.ylabel("Actual label")
+    plt.xlabel("Predicted label")
 
-    plt.savefig(f"{INFO_PATH}/{version}/{y_type}_confusion_matrix_{version}", bbox_inches='tight', dpi=300)
+    plt.savefig(
+        f"{IMG_PATH}/{version}/{y_type}_confusion_matrix_{version}",
+        bbox_inches="tight",
+        dpi=300,
+    )
 
     tn, fp, fn, tp = cm.ravel()
     results = {
@@ -133,11 +140,27 @@ def plot_confusion_matrix(labels: np.ndarray, predictions: np.ndarray, version: 
         "false_positives": int(fp),
         "false_negatives": int(fn),
         "true_positives": int(tp),
-        "total_lesions": int(np.sum(cm[1]))
+        "total_lesions": int(np.sum(cm[1])),
     }
-    
-    results_path = f"{INFO_PATH}/{version}/{y_type}_classification_metrics_{version}.json"
 
-    with open(results_path, 'w') as f:
+    results_path = (
+        f"{INFO_PATH}/{version}/{y_type}_classification_metrics_{version}.json"
+    )
+
+    with open(results_path, "w") as f:
         json.dump(results, f)
 
+
+def save_precision_results(
+    labels: np.ndarray, predictions: np.ndarray, version: str, y_type: str
+):
+    precision = Precision()
+    precision.update_state(labels, predictions)
+    precision_result = precision.result().numpy()
+
+    results = {"precision": float(precision_result)}
+
+    precision_path = f"{INFO_PATH}/{version}/{y_type}_precision_metric_{version}.json"
+
+    with open(precision_path, "w") as f:
+        json.dump(results, f)
