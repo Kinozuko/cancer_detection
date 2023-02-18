@@ -33,7 +33,9 @@ def run_process_images(n_pools: int = 2):
     print(f"Process Images runs in {end_time-start_time} seconds")
 
 
-def run_train_model(version: str = "v1", n_batch: int = 30, n_epoch: int = 1):
+def run_train_model(
+    version: str = "v1", n_batch: int = 30, n_epoch: int = 1, patience: int = 5
+):
     start_time = time.time()
     x, y = read_images_dataset()
 
@@ -52,7 +54,7 @@ def run_train_model(version: str = "v1", n_batch: int = 30, n_epoch: int = 1):
         early_callback = EarlyStopping(
             monitor="val_auc",
             verbose=1,
-            patience=10,
+            patience=patience,
             mode="max",
             restore_best_weights=True,
         )
@@ -139,6 +141,9 @@ if __name__ == "__main__":
     parser.add_argument(
         "--n-epoch", type=int, default=1, help=f"Number of batches to use"
     )
+    parser.add_argument(
+        "--patience", type=int, default=5, help=f"Patience to use in Early Stopping"
+    )
     args = parser.parse_args()
 
     if args.method == "process":
@@ -151,7 +156,8 @@ if __name__ == "__main__":
             args.model_version not in MODEL_VERSIONS
             and parser.n_batch <= 0
             and parser.n_epoch <= 0
+            and parser.patience <= 0
         ):
-            print(f"model_version argument need to be one this: {MODEL_VERSIONS}")
+            print(f"Some arguments are wrong")
             sys.exit()
-        run_train_model(args.model_version, args.n_batch, args.n_epoch)
+        run_train_model(args.model_version, args.n_batch, args.n_epoch, args.patience)
