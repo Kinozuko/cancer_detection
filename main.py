@@ -1,7 +1,9 @@
 import argparse
 import sys
 import time
+import warnings
 
+import tensorflow as tf
 from tensorflow.keras.callbacks import EarlyStopping
 from tensorflow.keras.losses import BinaryCrossentropy
 from tensorflow.keras.models import load_model
@@ -53,9 +55,9 @@ def run_train_model(version: str = "v1"):
         )
 
         history = model.fit(
-            train_ds.batch(batch_size=64),
+            train_ds.batch(batch_size=30),
             epochs=1,
-            validation_data=validation_ds.batch(batch_size=64),
+            validation_data=validation_ds.batch(batch_size=30),
             callbacks=[early_callback],
         )
 
@@ -63,11 +65,13 @@ def run_train_model(version: str = "v1"):
 
         plot_log_loss(history, f"Model {version}", version)
         plot_metrics(history, version)
-        evaluate_model(model, test_ds)
+        evaluate_model(model, test_ds, version, batch_size=30)
 
         y_train_pred, y_test_pred = generate_predictions(
             model, train_test_np["train"][0], train_test_np["test"][0]
         )
+
+        tf.keras.backend.clear_session()
 
         end_time = time.time()
 

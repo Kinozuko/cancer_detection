@@ -1,3 +1,12 @@
+# Pre-requisities
+```
+## Open CV
+
+apt-get install libgl1-mesa-glx
+apt-get install libglib2.0-dev
+
+```
+
 # How to create virtualenv
 
 ```

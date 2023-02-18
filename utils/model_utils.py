@@ -1,3 +1,4 @@
+import json
 import os
 
 import matplotlib.pyplot as plt
@@ -93,11 +94,17 @@ def plot_metrics(history: History, version: str = "v1"):
     plt.savefig(f"{IMG_PATH}/{version}/metrics_{version}")
 
 
-def evaluate_model(model: Model, test_ds: Dataset):
-    score_test = model.evaluate(test_ds.batch(batch_size=64))
+def evaluate_model(model: Model, test_ds: Dataset, version: str, batch_size: int = 10):
+    score_test = model.evaluate(test_ds.batch(batch_size=batch_size))
 
-    for name, value in zip(model.metrics_names, score_test):
-        print(name, ": ", value)
+    evaluation_results = {
+        name: value for name, value in zip(model.metrics_names, score_test)
+    }
+
+    file_path = f"{INFO_PATH}/{version}/evaluation_{version}.json"
+
+    with open(file_path, "w") as f:
+        json.dump(evaluation_results, f)
 
 
 def generate_predictions(model: Model, x_train: np.array, x_test: np.array):
