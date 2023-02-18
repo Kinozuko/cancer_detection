@@ -17,6 +17,7 @@ from utils.model_utils import (
     plot_log_loss,
     plot_metrics,
     save_model_info,
+    plot_confusion_matrix
 )
 from utils.models import get_model
 from utils.process_image import process_images, read_images_dataset
@@ -70,6 +71,10 @@ def run_train_model(version: str = "v1"):
         y_train_pred, y_test_pred = generate_predictions(
             model, train_test_np["train"][0], train_test_np["test"][0]
         )
+
+        plot_confusion_matrix(train_test_np["train"][1], y_train_pred, version=version, y_type='train')
+        plot_confusion_matrix(train_test_np["test"][1], y_test_pred, version=version, y_type='test')
+        
 
         tf.keras.backend.clear_session()
 

@@ -6,3 +6,4 @@ kaggle
 scikit-learn
 tensorflow==2.*
 pydot
+seaborn
