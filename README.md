@@ -42,15 +42,17 @@ Execute python main.py --method process --n_pools 2
 
 Arguments:
     --method List of values [process, "train"]
-    --n-pool Integer greater to zero
+    --n-pool Number of pools, greater to zero
 ```
 
 # Execute process to train model
 
 ```
-Execute python main.py --method train --model-version v1
+Execute python main.py --method train --model-version v1 --n-batch 30 --n-epoch 1
 
 Arguments:
     --method List of values [process "train"]
     --model-version Version of the model to run [v1, v2]
+    --n-batch Number of batchs, greater to zero
+    --n-epoch Number of epochs, greater to zero
 ```

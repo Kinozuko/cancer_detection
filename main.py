@@ -33,7 +33,7 @@ def run_process_images(n_pools: int = 2):
     print(f"Process Images runs in {end_time-start_time} seconds")
 
 
-def run_train_model(version: str = "v1"):
+def run_train_model(version: str = "v1", n_batch: int = 30, n_epoch: int = 1):
     start_time = time.time()
     x, y = read_images_dataset()
 
@@ -52,15 +52,15 @@ def run_train_model(version: str = "v1"):
         early_callback = EarlyStopping(
             monitor="val_auc",
             verbose=1,
-            patience=3,
+            patience=10,
             mode="max",
             restore_best_weights=True,
         )
 
         history = model.fit(
-            train_ds.batch(batch_size=30),
-            epochs=1,
-            validation_data=validation_ds.batch(batch_size=30),
+            train_ds.batch(batch_size=n_batch),
+            epochs=n_epoch,
+            validation_data=validation_ds.batch(batch_size=n_batch),
             callbacks=[early_callback],
         )
 
@@ -68,7 +68,7 @@ def run_train_model(version: str = "v1"):
 
         plot_log_loss(history, f"Model {version}", version)
         plot_metrics(history, version)
-        evaluate_model(model, test_ds, version, batch_size=30)
+        evaluate_model(model, test_ds, version, batch_size=n_batch)
 
         y_train_pred, y_test_pred = generate_predictions(
             model, train_test_np["train"][0], train_test_np["test"][0]
@@ -133,6 +133,12 @@ if __name__ == "__main__":
         choices=["v1", "v2"],
         help=f"Version of the model to train {MODEL_VERSIONS}",
     )
+    parser.add_argument(
+        "--n-batch", type=int, default=30, help=f"Number of batches to use"
+    )
+    parser.add_argument(
+        "--n-epoch", type=int, default=1, help=f"Number of batches to use"
+    )
     args = parser.parse_args()
 
     if args.method == "process":
@@ -141,7 +147,11 @@ if __name__ == "__main__":
             sys.exit()
         run_process_images(n_pools=args.n_pools)
     elif args.method == "train":
-        if args.model_version not in MODEL_VERSIONS:
+        if (
+            args.model_version not in MODEL_VERSIONS
+            and parser.n_batch <= 0
+            and parser.n_epoch <= 0
+        ):
             print(f"model_version argument need to be one this: {MODEL_VERSIONS}")
             sys.exit()
-        run_train_model(args.model_version)
+        run_train_model(args.model_version, args.n_batch, args.n_epoch)
