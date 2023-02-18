@@ -57,7 +57,7 @@ def save_model_info(
     return model
 
 
-def plot_log_loss(history: History, title_label: str, version: str = "v1") -> ():
+def plot_log_loss(history: History, title_label: str, version: str = "v1"):
     plt.semilogy(
         history.epoch,
         history.history["loss"],

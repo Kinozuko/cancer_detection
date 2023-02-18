@@ -130,6 +130,7 @@ if __name__ == "__main__":
         "--model-version",
         type=str,
         default="v1",
+        choices=["v1", "v2"],
         help=f"Version of the model to train {MODEL_VERSIONS}",
     )
     args = parser.parse_args()

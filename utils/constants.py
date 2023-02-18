@@ -12,7 +12,7 @@ from tensorflow.keras.metrics import (
     TruePositives,
 )
 
-MODEL_VERSIONS = ["v1"]
+MODEL_VERSIONS = ["v1", "v2"]
 SHAPE = (512, 512, 3)
 RESIZE = (512, 512)
 BASE_PATH = os.getcwd()
