@@ -17,6 +17,7 @@ from utils.model_utils import (
     plot_confusion_matrix,
     plot_log_loss,
     plot_metrics,
+    plot_roc_curves,
     save_model_info,
     save_precision_results,
 )
@@ -85,6 +86,22 @@ def run_train_model(version: str = "v1"):
         )
         save_precision_results(
             train_test_np["test"][1], y_test_pred, version=version, y_type="test"
+        )
+
+        plot_roc_curves(
+            [
+                {
+                    "name": "Train Base",
+                    "labels": train_test_np["train"][1],
+                    "predictions": y_train_pred,
+                },
+                {
+                    "name": "Test Base",
+                    "labels": train_test_np["test"][1],
+                    "predictions": y_test_pred,
+                },
+            ],
+            version,
         )
 
         tf.keras.backend.clear_session()

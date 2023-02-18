@@ -1,11 +1,12 @@
 import json
 import os
+from typing import List
 
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
 from matplotlib import rcParams
-from sklearn.metrics import confusion_matrix
+from sklearn.metrics import confusion_matrix, roc_auc_score, roc_curve
 from tensorflow.data import Dataset
 from tensorflow.keras import Model
 from tensorflow.keras.callbacks import EarlyStopping, History
@@ -15,7 +16,7 @@ from tensorflow.keras.utils import plot_model
 from .constants import IMG_PATH, INFO_PATH
 
 rcParams["figure.figsize"] = (12, 10)
-colors = plt.rcParams["axes.prop_cycle"].by_key()[
+COLORS = plt.rcParams["axes.prop_cycle"].by_key()[
     "color"
 ]  # 7 colors: blue, orange, green, red, purple, brown, and pink
 
@@ -60,13 +61,13 @@ def plot_log_loss(history: History, title_label: str, version: str = "v1") -> ()
     plt.semilogy(
         history.epoch,
         history.history["loss"],
-        color=colors[0],
+        color=COLORS[0],
         label="Train " + title_label,
     )
     plt.semilogy(
         history.epoch,
         history.history["val_loss"],
-        color=colors[4],
+        color=COLORS[4],
         label="Val " + title_label,
         linestyle="--",
     )
@@ -82,11 +83,11 @@ def plot_metrics(history: History, version: str = "v1"):
     for n, metric in enumerate(metrics):
         name = metric.replace("_", " ").capitalize()
         plt.subplot(3, 2, n + 1)  # adjust according to metrics
-        plt.plot(history.epoch, history.history[metric], color=colors[0], label="Train")
+        plt.plot(history.epoch, history.history[metric], color=COLORS[0], label="Train")
         plt.plot(
             history.epoch,
             history.history["val_" + metric],
-            color=colors[0],
+            color=COLORS[0],
             linestyle="--",
             label="Val",
         )
@@ -164,3 +165,33 @@ def save_precision_results(
 
     with open(precision_path, "w") as f:
         json.dump(results, f)
+
+
+def plot_roc_curves(datasets: List[dict], version: str):
+    plt.figure(figsize=(8, 8))
+    lw = 2
+
+    for i, data in enumerate(datasets):
+        name = data["name"]
+        labels = data["labels"]
+        predictions = data["predictions"]
+
+        fp, tp, _ = roc_curve(labels, predictions)
+        auc = roc_auc_score(labels, predictions)
+        plt.plot(
+            100 * fp,
+            100 * tp,
+            color=COLORS[i % len(COLORS)],
+            lw=lw,
+            label=f"{name} (AUC = {auc:.3f})",
+        )
+
+    plt.plot([0, 100], [0, 100], color="gray", lw=lw, linestyle="--")
+    plt.xlim([0, 100])
+    plt.ylim([0, 100])
+    plt.xlabel("False Positive Rate")
+    plt.ylabel("True Positive Rate")
+    plt.title("ROC Curves")
+    plt.legend(loc="lower right")
+
+    plt.savefig(f"{IMG_PATH}/{version}/roc_curve_{version}")
