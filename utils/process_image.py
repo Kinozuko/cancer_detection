@@ -98,7 +98,14 @@ def process_images(n_pools: int = 2):
         )
 
 
-def read_images_dataset():
+def read_images_dataset(type="parallel"):
+    if type == "parallel":
+        return read_images_dataset_parallel()
+    else:
+        return read_images_dataset_normal
+
+
+def read_images_dataset_normal():
     data = []
 
     train_folder = (
@@ -141,5 +148,54 @@ def read_images_dataset():
 
     x_data = np.array(x)
     y_data = np.array(y)
+
+    return x_data, y_data
+
+
+def load_image(image_path, is_cancer):
+    img = cv2.imread(image_path)
+    return img, is_cancer
+
+
+def read_images_dataset_parallel():
+    data = []
+    pool = mp.Pool()
+
+    train_folder = os.path.join(DATA_PATH, f"train_{RESIZE[0]}_{RESIZE[1]}")
+    train_csv = pd.read_csv(os.path.join(DATA_PATH, "train.csv"))
+
+    for patient_id in os.listdir(train_folder):
+        patient_folder = os.path.join(train_folder, patient_id)
+        images_ids = [
+            int(image.split(".png")[0]) for image in os.listdir(patient_folder)
+        ]
+        is_cancer = (
+            train_csv[train_csv["image_id"].isin(images_ids)][["cancer", "image_id"]]
+            .set_index("image_id")
+            .to_dict(orient="index")
+        )
+
+        image_paths = [
+            os.path.join(patient_folder, image) for image in os.listdir(patient_folder)
+        ]
+        results = pool.starmap(
+            load_image,
+            [
+                (
+                    image_path,
+                    is_cancer[int(image_path.split("/")[-1].split(".png")[0])][
+                        "cancer"
+                    ],
+                )
+                for image_path in image_paths
+            ],
+        )
+        data.extend(results)
+
+    pool.close()
+    pool.join()
+
+    x_data = np.array([result[0] for result in data])
+    y_data = np.array([result[1] for result in data])
 
     return x_data, y_data
