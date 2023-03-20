@@ -54,10 +54,18 @@ def save_model_info(
     model.save(f"{model_path}/model_{version}.h5")
     model.save_weights(f"{model_path}/weights_{version}.h5")
 
+    with open(f"{model_path}/best_epoch_{version}.txt", "w") as file:
+        file.write(str(early_callback.best_epoch))
+
     return model
 
 
 def plot_log_loss(history: History, title_label: str, version: str = "v1"):
+    model_path = f"{INFO_PATH}/{version}"
+
+    with open(f"{model_path}/best_epoch_{version}.txt", "r") as file:
+        best_epoch = int(file.read())
+
     plt.semilogy(
         history.epoch,
         history.history["loss"],
@@ -71,6 +79,17 @@ def plot_log_loss(history: History, title_label: str, version: str = "v1"):
         label="Val " + title_label,
         linestyle="--",
     )
+    plt.semilogy(
+        history.epoch,
+        history.history["val_auc"],
+        color=COLORS[2],
+        label="Val auc " + title_label,
+        linestyle="--",
+    )
+    plt.axvline(
+        x=history.epoch[best_epoch], color=COLORS[5], label=f"Best epoch {best_epoch}"
+    )
+
     plt.xlabel("Epoch")
     plt.ylabel("Loss")
 

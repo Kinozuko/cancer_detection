@@ -160,4 +160,6 @@ if __name__ == "__main__":
         ):
             print(f"Some arguments are wrong")
             sys.exit()
-        run_train_model(args.model_version, args.n_batch, args.n_epoch, args.patience)
+        run_train_model(
+            args.model_version, args.n_batch, int(args.n_epoch), args.patience
+        )
