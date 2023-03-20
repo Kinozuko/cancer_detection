@@ -79,13 +79,6 @@ def plot_log_loss(history: History, title_label: str, version: str = "v1"):
         label="Val " + title_label,
         linestyle="--",
     )
-    plt.semilogy(
-        history.epoch,
-        history.history["val_auc"],
-        color=COLORS[2],
-        label="Val auc " + title_label,
-        linestyle="--",
-    )
     plt.axvline(
         x=history.epoch[best_epoch], color=COLORS[5], label=f"Best epoch {best_epoch}"
     )
