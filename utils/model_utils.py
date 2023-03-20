@@ -140,10 +140,12 @@ def generate_predictions(model: Model, x_train: np.array, x_test: np.array):
 def plot_confusion_matrix(
     labels: np.ndarray, predictions: np.ndarray, version: str, y_type: str, p: int = 0.5
 ):
+    labels_str = ["No Cancer", "Cancer"]
+
     cm = confusion_matrix(labels, predictions > p)
 
     plt.figure(figsize=(5, 5))
-    sns.heatmap(cm, annot=True, fmt="d")
+    sns.heatmap(cm, annot=True, fmt="d", xticklabels=labels_str, yticklabels=labels_str)
     plt.title("Confusion matrix @{:.2f}".format(p))
     plt.ylabel("Actual label")
     plt.xlabel("Predicted label")
